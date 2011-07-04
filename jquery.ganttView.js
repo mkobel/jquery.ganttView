@@ -144,7 +144,22 @@ behavior: {
                 itemDiv.append(jQuery("<div>", {
                     "class": "ganttview-vtheader-item-name",
                     "css": { "height": (data[i].series.length * cellHeight) + "px" }
-                }).append(data[i].name));
+                }).append(data[i].name+' ID:'+data[i].id));
+
+				itemDiv.find('.ganttview-vtheader-item-name:last').attr('id',data[i].id);
+
+				/** Handle click on item **/
+				itemDiv.find('.ganttview-vtheader-item-name:last').click(function() {
+					alert($(this).html());
+					$(this).parent().css('height',cellHeight+'px');
+					var id = $(this).attr('id');
+					jQuery(".ganttview-block-project-"+id).each(function (){
+						jQuery(this).parent().css('display','none');
+					});
+					jQuery(".ganttview-block-project-"+id+":first").parent().css('display','block').css('background-color','red');
+				});
+
+				/** plot series headers **/
                 var seriesDiv = jQuery("<div>", { "class": "ganttview-vtheader-series" });
                 for (var j = 0; j < data[i].series.length; j++) {
                     seriesDiv.append(jQuery("<div>", { "class": "ganttview-vtheader-series-name" })
@@ -225,8 +240,8 @@ behavior: {
                     var size = DateUtils.daysBetween(series.start, series.end) + 1;
 					var offset = DateUtils.daysBetween(start, series.start);
 					var block = jQuery("<div>", {
-                        "class": "ganttview-block",
-                        "title": series.name + ", " + size + " days",
+                        "class": "ganttview-block ganttview-block-project-"+data[i].id,
+                        "title": series.name + ", " + size + " days ( PID:"+data[i].id+")",
                         "css": {
                             "width": ((size * cellWidth) - 9) + "px",
                             "margin-left": ((offset * cellWidth) + 3) + "px"
